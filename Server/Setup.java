@@ -27,19 +27,48 @@ public class Setup {
             // 3. Generate the public/private pair
             KeyPair pair = keyPairGen.generateKeyPair();
             
-            // Optional: Print out the Base64 representations
             String publicKey = Base64.getEncoder().encodeToString(pair.getPublic().getEncoded());
             String privateKey = Base64.getEncoder().encodeToString(pair.getPrivate().getEncoded());
         
             prop.setProperty("server.publicKey", publicKey);
             prop.setProperty("server.privateKey", privateKey);
 
-            // Save the file with an optional header comment
+            // Save the file with header comment
             prop.store(output, "NightlySQL database configuration settings");
             System.out.println("Config file created successfully at: " + configFile.getAbsolutePath());
 
         } catch (IOException e) {
             System.err.println("Error creating config file: " + e.getMessage());
+        }
+        try {
+            // Create the bucket parent directory
+            File dbDir = new File("./buckets");
+            if (!dbDir.exists()) {
+                if (dbDir.mkdir()) {
+                    System.out.println("Bucket parent directory created successfully at: " + dbDir.getAbsolutePath());
+                } else {
+                    System.err.println("Failed to create bucket parent directory.");
+                }
+            } else {
+                System.out.println("Bucket parent directory already exists at: " + dbDir.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            System.err.println("Error creating bucket parent directory: " + e.getMessage());
+        }
+        try {
+            // Create the bucket subdirectory
+            File dbSubDir = new File("./buckets/main");
+            if (!dbSubDir.exists()) {
+                if (dbSubDir.mkdir()) {
+                    System.out.println("Bucket \"main\" created successfully at: " + dbSubDir.getAbsolutePath());
+                } else {
+                    System.err.println("Failed to create bucket \"main\".");
+                }
+            } else {
+                System.out.println("Bucket \"main\" already exists at: " + dbSubDir.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            System.err.println("Error creating bucket subdirectory: " + e.getMessage());
         }
     }
 }
